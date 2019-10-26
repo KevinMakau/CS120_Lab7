@@ -18,11 +18,11 @@ int buttonState (int);
 int main(void) {
     /* Insert DDR and PORT initializations */
 	DDRA = 0x00; PORTA = 0xFF;
-	DDRC = 0xFF; PORTC = 0x07;
+	DDRC = 0xFF; PORTC = 0x00;
+	DDRD = 0xFF; PORTD = 0x00;
 
 
-
-	
+	LCD_ClearScreen(void);	
 
     /* Insert your solution below */
 	States state = init;
@@ -47,27 +47,34 @@ int buttonState (int state){
 			break;
 		case pressA0:
 			state = waitA0;
-			if(PORTC != 9){ 
-				PORTC = PORTC + 1;
+			if(temp != 9){ 
+				temp = temp + 1;
 			}
 			break;
 		case waitA0:
 			state = !A0? init: waitA0;
+			if(temp != 9){ 
+				temp = temp + 1;
+			}
 			break;
 		case pressA1:
 			state = waitA1;
-			if (PORTC != 0){
-				PORTC = PORTC - 1;
+			if (temp != 0){
+				temp = temp - 1;
 			}
 			break;
 		case waitA1:
 			state = !A1? init: waitA1;
+			if (temp != 0){
+				temp = temp - 1;
+			}
 			break;
 		case reset:
-			PORTC = 0;
+			temp = 0;
 			if(!(A0 | A1)){
 				state = init;
 			}
+			LCD_WriteData( temp + ‘0’ );
 			break;
 	}
 	return state;
